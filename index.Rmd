@@ -1,0 +1,108 @@
+---
+title: "The Life of Dan"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    vertical_layout: scroll
+---
+
+```{r global, include=FALSE}
+library(flexdashboard)
+library(shinydashboard)
+library(tidyverse)
+library(plotly)
+
+logistic <- function (x, length = 10, max = 1, mid = 0, k=1){
+  out <- c()
+  for(i in 1:length(x)){
+    out[i] <- max/(1+exp(-(k*x[i]-mid)))
+  }
+  
+  out
+}
+
+plot_me <- function(){
+  theme_minimal()+
+  theme(axis.title = element_text(face="bold", size = 20),plot.title = element_text(face = "bold", size=28 ),
+        axis.text = element_text(size=16),legend.title=element_text(face="bold",size=22), 
+        plot.subtitle = element_text(size=24), axis.text.x = element_text(face = "bold", size = 18))
+}
+
+data <- data.frame(year = as.integer(2002:2021), awesomeness = logistic(2002:2021, max = 90, mid = 2002)+runif(20, -10, 10) )
+
+plot1 <- ggplot(data, aes(year,awesomeness))+geom_line(size=2, col = "chartreuse3")+plot_me()+labs(title = "My Awesomeness By Year", x="Year", 
+                                            y="Level of Awesomeness", caption = "Source: The Complete Memoirs of Daniel Dorey Rodriguez")+
+  scale_x_continuous(breaks = seq(2002, 2020, 2))
+
+set.seed(101)
+a1 <- matrix(rbeta(100*3,1,2), nc=6)
+a1 <- sweep(a1, 1, rowSums(a1), FUN="/")
+colMeans(a1)
+
+
+data_2 <- data.frame(Destinations = c("Amsterdam", "Hendaye", "Aachen", "San \nFrancisco", 
+                                      "Fénery", "Torre \nPacheco"), Probability = colMeans(a1))
+
+
+plot2 <- ggplot(data_2, aes(Destinations, Probability, fill = Destinations))+geom_col()+plot_me()+labs()+theme(axis.text.x = element_text(face = "bold", size =15), legend.position = "none")+labs(title = "My Likely Holiday Destinations")
+
+```
+
+Row
+-----------------------------------------------------------------------
+
+### Awesomeness Evolution
+
+```{r}
+
+
+ggplotly(plot1)
+
+
+```
+
+Row
+-----------------------------------------------------------------------
+
+### Tony Relationship Tracker
+
+```{r}
+gauge(78, min = 0, max = 100, symbol = '%', gaugeSectors(
+  success = c(80, 100), warning = c(40, 79), danger = c(0, 39)
+))
+```
+
+### Tea Relationship Tracker
+
+```{r}
+gauge(87, min = 0, max = 100, symbol = '%', gaugeSectors(
+  success = c(80, 100), warning = c(40, 79), danger = c(0, 39)
+))
+```
+
+### Jack Relationship Tracker
+
+```{r}
+gauge(38, min = 0, max = 100, symbol = '%', gaugeSectors(
+  success = c(80, 100), warning = c(40, 79), danger = c(0, 39)
+))
+
+```
+
+
+
+
+Row
+-----------------------------------------------------------------------
+
+### My Likely Holiday Destinations for This Summer 
+
+```{r}
+
+ggplotly(plot2)
+
+
+
+```
+
+
